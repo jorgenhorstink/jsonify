@@ -10,6 +10,7 @@ adding [HTML5 data attributes](http://ejohn.org/blog/html-5-data-attributes/) to
 
 ## Example
 
+    ```html
     <!DOCTYPE html>
     <html>
         <head>
@@ -81,6 +82,7 @@ adding [HTML5 data attributes](http://ejohn.org/blog/html-5-data-attributes/) to
     
         </body>
     </html>
+    ```
     
 ## Author
 
