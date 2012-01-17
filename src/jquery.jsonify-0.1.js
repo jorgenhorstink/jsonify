@@ -78,34 +78,33 @@
                 }
 
                 if (part.substr(-1) === ']') {
+                    // array
+                    
                     name = part.split('[')[0];
                     // array index
                     ai = part.match(/([0-9]+)\]$/)[1];
-                } else {
-                    name = part;
-                    ai = null;
-                }
+                    
+                    // create the empty array if it does not exist yet
+                    if (!json[name]) {
+                        json[name] = [];
+                    }
+                    
+                    // create the array index if it does not exist yet
+                    if (!json[name][ai]) {
+                        json[name][ai] = value;
+                    }
 
-                if (ai === null) {
+                    json = json[name][ai];
+                } else {
                     // no array
+                    
+                    name = part;
 
                     if (!json[name]) {
                         json[name] = value;
                     }
 
                     json = json[name];
-
-                } else {
-                    // array
-
-                    if (!json[name]) {
-                        json[name] = [];
-                    }
-                    if (!json[name][ai]) {
-                        json[name][ai] = value;
-                    }
-
-                    json = json[name][ai];
                 }
             }
         });
