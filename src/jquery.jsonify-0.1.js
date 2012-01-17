@@ -6,7 +6,7 @@
 
     function jsonify(element, options) {
 
-        var json, root, getPath, getValue;
+        var json, root, getPath, getValue, getFormattedValue;
 
         root = json = {};
 
@@ -42,11 +42,25 @@
             if (item.data('jsonify-getter')) {
                 return getters[item.data('jsonify-getter')].apply(item) || options.getters[item.data('jsonify-getter')].apply(item);
             } else if (item.is('input[type="checkbox"],input[type="radio"]')) {
-                return item.is(':checked') ? item.val() : null;
+                return item.is(':checked');
+            } else if (item.is('select')) {
+                return item.val() == '' ? null : item.val();
             } else {
                 return item.val();
             }
         };
+        
+        getFormattedValue = function (item) {
+            var value = getValue(item);
+            
+            if (item.data('type-int') !== undefined) {
+                return parseInt(value);
+            } else if (item.data('type-boolean') !== undefined) {
+                return value === 1 || value === "1" || value === true || value === "true" || value === "yes";
+            } else {
+                return value;   
+            }
+        }
 
         element.find('[data-jsonify-name]').each(function () {
 
@@ -58,7 +72,7 @@
                 part = parts[i];
 
                 if (i === l - 1) {
-                    value = getValue($(this));
+                    value = getFormattedValue($(this));
                 } else {
                     value = {};
                 }
@@ -100,8 +114,8 @@
     }
 
     $.fn.jsonify = function (options) {
-
         var ret = null;
+        
         this.each(function () {
             ret = jsonify($(this), options);
         });

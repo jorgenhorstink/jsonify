@@ -1,0 +1,132 @@
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        
+            <script type="text/javascript" src="../src/jquery.jsonify-0.1.js"></script>
+            <script type="text/javascript">
+            
+            (function ($, undefined) {
+                $(function () {
+                
+                    // create a jsonify fruit getter plugin, it just returns the HTML converted to lowercase
+                    $.jsonify({
+                        getters : {
+                            html : function () {
+                                return this.html();  
+                            },
+                            fruit : function () {
+                                return this.html().toLowerCase();   
+                            }
+                        }
+                    });
+    
+                    $('.submit').click(function () {
+                        var object = $('form').jsonify(), 
+                            json = JSON.stringify(object, null, 4);
+                    
+                        alert(json);
+                        
+                        return false;
+                    });
+                });
+            }(jQuery));
+            
+            </script>
+        </head>
+        <body>
+        
+            <form>
+
+                <fieldset>
+                    <legend>Person:</legend>
+                
+                    <label>Name:</label>
+                    <input type="text" data-jsonify-name="person.name" value="Jorgen Horstink"><br>
+                    
+                    <label>City:</label>
+                    <input type="text" data-jsonify-name="person.city" value="UTRECHT"><br>
+    
+                    <label>Gender:</label>
+                    <select data-jsonify-name="person.gender">
+                        <option value="">Make a choice...</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select><br>
+                    
+                    <label>How old are you now?</label>
+                    <select data-jsonify-name="person.age" data-type-int>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25" selected>25</option>
+                        <option value="26">26</option>
+                    </select>
+                </fieldset>
+                
+                <fieldset>
+                    <legend>Which of the following fruit do you like?</legend>
+                    
+                    <span data-jsonify-name="yummy.fruit[0].name" data-jsonify-getter="fruit">Orange</span>: 
+                    <input type="checkbox" data-jsonify-name="yummy.fruit[0].like"><br>
+                    
+                    <span data-jsonify-name="yummy.fruit[1].name" data-jsonify-getter="fruit">Banana</span>: 
+                    <input type="checkbox" data-jsonify-name="yummy.fruit[1].like" checked><br>
+                    
+                    <span data-jsonify-name="yummy.fruit[2].name" data-jsonify-getter="fruit">Strawberry</span>: 
+                    <input type="checkbox" data-jsonify-name="yummy.fruit[2].like"><br>
+                    
+                </fieldset>
+                
+                <fieldset>
+                    <legend>Which of the following drinks do you like?</legend>
+                    
+                    
+                    <span data-jsonify-name="yummy.drinks[0].name" data-jsonify-getter="fruit">Beer</span>: 
+                    <input type="checkbox" data-jsonify-name="yummy.drinks[0].name" checked><br>
+                    
+                    <span data-jsonify-name="yummy.drinks[1].name" data-jsonify-getter="fruit">Wine</span>: 
+                    <input type="checkbox" data-jsonify-name="yummy.drinks[1].name" checked><br>
+                    
+                    <span data-jsonify-name="yummy.drinks[2].name" data-jsonify-getter="fruit">Lemonade</span>: 
+                    <input type="checkbox" data-jsonify-name="yummy.drinks[2].name"><br>
+                    
+                </fieldset>
+                
+                <!-- 
+                    With a repeatable plugin, it is possible to repeat a DocumentFragment by cloning it...
+                    This can be useful for one to many relations; one todo list with an array of tasks.
+                    
+                    The jsonify plugin uses the data-jsonify-array, and data-jsonify-array-item attributes
+                    to generate an auto incremented JSON array object.
+                    
+                    Result:
+                    
+                    {
+                        "todo" : [
+                            { "done" : false, "task" : "Go to bed!" }, 
+                            { "done" : false, "task" : "Wake up!" }
+                        ]
+                    }
+                -->
+                <ul data-jsonify-array="todo" data-repeatable>
+                    <li data-jsonify-array-item>
+                        <input type="checkbox" data-jsonify-name="done">
+                        <span data-jsonify-name="task" data-jsonify-getter="html">Go to bed!</span> 
+                    </li>
+                    <li data-jsonify-array-item>
+                        <input type="checkbox" data-jsonify-name="done">
+                        <span data-jsonify-name="task" data-jsonify-getter="html">Wake up!</span> 
+                    </li>
+                </ul>
+    
+                <button class="submit">Get the JSON object!</button>
+    
+            </form>
+    
+        </body>
+    </html>
