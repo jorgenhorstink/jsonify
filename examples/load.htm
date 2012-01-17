@@ -1,0 +1,79 @@
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        
+            <script type="text/javascript" src="../src/jquery.jsonify-0.1.js"></script>
+            <script type="text/javascript">
+            
+            (function ($, undefined) {
+                $(function () {
+
+                    // create a jsonify fruit getter plugin, it just returns the HTML converted to lowercase
+                    $.jsonify({
+                        getters : {
+                            html : function () {
+                                return this.html();  
+                            },
+                            fruit : function () {
+                                return this.html().toLowerCase();   
+                            }
+                        }
+                    });
+ 
+                    $('form').jsonify('load', {
+                        object : JSON.parse($('code').html()),
+                        end : function () {
+                            // end callback   
+                        }
+                    }); 
+                });
+            }(jQuery));
+            
+            </script>
+        </head>
+        <body>
+            JSON input:
+            <code><pre>
+    {
+        "person" : {
+            "name" : "Jorgen Horstink",
+            "city" : "UTRECHT"
+        },
+        
+        "contacts" : [
+            { "name" : "Node.js",      "like" : true },
+            { "id" : 2, "name" : "PHP",          "like" : true },
+            { "id" : 3, "name" : "Visual Basic", "like" : false }
+        ]
+    }
+            </pre></code>
+            
+            <form style="margin-top: 30px;">
+
+                <fieldset>
+                    <legend>Person:</legend>
+                
+                    <label>Name:</label>
+                    <input type="text" data-jsonify-name="person.name" value="Jorgen Horstink"><br>
+                    
+                    <label>City:</label>
+                    <input type="text" data-jsonify-name="person.city" value="UTRECHT"><br>
+                </fieldset>
+                
+                <fieldset>
+                    <legend>Which of the following fruit do you like?</legend>
+                    
+                    <span data-jsonify-name="yummy.fruit[0].name" data-jsonify-getter="fruit">Orange</span>: 
+                    <input type="checkbox" data-jsonify-name="yummy.fruit[0].like"><br>
+                    
+                    <span data-jsonify-name="yummy.fruit[1].name" data-jsonify-getter="fruit">Banana</span>: 
+                    <input type="checkbox" data-jsonify-name="yummy.fruit[1].like" checked><br>
+                    
+                    <span data-jsonify-name="yummy.fruit[2].name" data-jsonify-getter="fruit">Strawberry</span>: 
+                    <input type="checkbox" data-jsonify-name="yummy.fruit[2].like"><br>
+                    
+                </fieldset>
+            </form>
+        </body>
+    </html>

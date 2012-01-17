@@ -22,8 +22,10 @@
                     });
     
                     $('.submit').click(function () {
-                        var object = $('form').jsonify(), 
-                            json = JSON.stringify(object, null, 4);
+                        var object, json;
+                        
+                        object = $('form').jsonify(); 
+                        json = JSON.stringify(object, null, 4);
                     
                         alert(json);
                         

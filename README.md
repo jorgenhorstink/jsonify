@@ -34,7 +34,7 @@ adding [HTML5 data attributes](http://ejohn.org/blog/html-5-data-attributes/) to
                 $('.submit').click(function () {
                     var object, json;
 
-                    object = $('form').jsonify(), 
+                    object = $('form').jsonify();
                     json = JSON.stringify(object, null, 4);
                 
                     alert(json);

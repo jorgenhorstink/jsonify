@@ -1,12 +1,22 @@
-(function($, undefined) {
+(function ($) {
 
     "use strict";
 
-    var getters = {};
-
+    var getters = {
+        "default" : function () {
+            if (this.is('input[type="checkbox"],input[type="radio"]')) {
+                return this.is(':checked');
+            } else if (this.is('select')) {
+                return this.val() === '' ? null : this.val();
+            } else {
+                return this.val();
+            }
+        }
+    };
+    
     function jsonify(element, options) {
 
-        var json, root, getPath, getValue, getFormattedValue;
+        var json, root, getPath, getValue, getCastedValue;
 
         root = json = {};
 
@@ -39,28 +49,43 @@
         }());
 
         getValue = function (item) {
-            if (item.data('jsonify-getter')) {
-                return getters[item.data('jsonify-getter')].apply(item) || options.getters[item.data('jsonify-getter')].apply(item);
-            } else if (item.is('input[type="checkbox"],input[type="radio"]')) {
-                return item.is(':checked');
-            } else if (item.is('select')) {
-                return item.val() == '' ? null : item.val();
-            } else {
-                return item.val();
-            }
-        };
-        
-        getFormattedValue = function (item) {
-            var value = getValue(item);
+            var getter, type, value;
             
-            if (item.data('type-int') !== undefined) {
-                return parseInt(value);
-            } else if (item.data('type-boolean') !== undefined) {
+            if (item.data('jsonify-getter')) {
+                
+                var parts = item.data('jsonify-getter').split(':');
+                
+                getter = parts[0] === "" ? "default" : parts[0];
+                type = parts[1] || null;
+
+            } else {
+                getter = "default";
+            }
+            
+            if (getters[getter]) {
+                value = getters[getter].apply(item)
+            } else { 
+                options.getters[getter].apply(item);
+            }
+
+            if (type !== null) {
+                value = getCastedValue(type, value);
+            }
+            
+            return value;
+        };
+
+        getCastedValue = function (type, value) {
+            if (type === 'int') {
+                return parseInt(value, 10); // radix paramenter = 10
+            } else if (type === 'float') {
+                return parseFloat(value, 10); // radix paramenter = 10
+            } else if (type === 'boolean' || type === 'bool') {
                 return value === 1 || value === "1" || value === true || value === "true" || value === "yes";
             } else {
-                return value;   
+                return value;
             }
-        }
+        };
 
         element.find('[data-jsonify-name]').each(function () {
 
@@ -72,23 +97,23 @@
                 part = parts[i];
 
                 if (i === l - 1) {
-                    value = getFormattedValue($(this));
+                    value = getValue($(this));
                 } else {
                     value = {};
                 }
 
                 if (part.substr(-1) === ']') {
                     // array
-                    
+
                     name = part.split('[')[0];
                     // array index
                     ai = part.match(/([0-9]+)\]$/)[1];
-                    
+
                     // create the empty array if it does not exist yet
                     if (!json[name]) {
                         json[name] = [];
                     }
-                    
+
                     // create the array index if it does not exist yet
                     if (!json[name][ai]) {
                         json[name][ai] = value;
@@ -97,7 +122,7 @@
                     json = json[name][ai];
                 } else {
                     // no array
-                    
+
                     name = part;
 
                     if (!json[name]) {
@@ -114,7 +139,7 @@
 
     $.fn.jsonify = function (options) {
         var ret = null;
-        
+
         this.each(function () {
             ret = jsonify($(this), options);
         });
